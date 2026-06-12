@@ -44,7 +44,7 @@ def _win_path(path: str) -> str:
 
 
 def sorted_mailboxes(maildir_path: str) -> list[str]:
-    """Return mailbox names sorted by email count descending."""
+    """Return mailbox names sorted by email count ascending (smallest first)."""
     entries = []
     for name in os.listdir(maildir_path):
         full = os.path.join(maildir_path, name)
