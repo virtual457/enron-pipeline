@@ -1,14 +1,19 @@
 {
+  "_comment": "MCP server configuration for the Enron Email Pipeline notification system.",
+  "_setup": [
+    "1. Install Node.js (https://nodejs.org)",
+    "2. Install the package globally: npm install -g @gongrzhe/server-gmail-autoauth-mcp",
+    "3. Authenticate once (opens browser for Google OAuth): npx @gongrzhe/server-gmail-autoauth-mcp auth",
+    "4. Register with Claude Code: claude mcp add gmail -- npx -y @gongrzhe/server-gmail-autoauth-mcp",
+    "5. Verify: claude mcp list  ->  gmail: ... ✓ Connected"
+  ],
   "mcpServers": {
     "gmail": {
-      "command": "npx",
-      "args": ["-y", "gmail-mcp-server"],
-      "env": {
-        "GMAIL_CLIENT_ID": "<your-google-oauth-client-id>",
-        "GMAIL_CLIENT_SECRET": "<your-google-oauth-client-secret>",
-        "GMAIL_REDIRECT_URI": "http://localhost:3000/oauth2callback",
-        "GMAIL_REFRESH_TOKEN": "<your-refresh-token>"
-      }
+      "command": "node",
+      "args": [
+        "<npm-global-path>/node_modules/@gongrzhe/server-gmail-autoauth-mcp/dist/index.js"
+      ],
+      "env": {}
     }
   }
 }
