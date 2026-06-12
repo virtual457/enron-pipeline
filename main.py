@@ -88,11 +88,28 @@ def task_extract_store(args):
     with open(DEFAULT_ERROR_LOG, "w", encoding="utf-8") as f:
         f.write("\n".join(error_lines))
 
+    total_processed = inserted + failed
     print(f"\n=== Extraction & Storage Stats ===")
     print(f"Mailboxes processed : {len(processed_mb)}")
-    print(f"Emails inserted     : {inserted}")
-    print(f"Failed parses       : {failed}")
+    print(f"Total processed     : {total_processed:,}")
+    print(f"Emails inserted     : {inserted:,}")
+    print(f"Failed parses       : {failed:,}  ({failed/total_processed*100:.1f}% failure rate)" if total_processed else "Failed parses       : 0")
     print(f"Error log           : {DEFAULT_ERROR_LOG}")
+
+    if inserted > 0:
+        print(f"\n=== Field-Level Completeness ({inserted:,} emails) ===")
+        cc_n = conn.execute("SELECT COUNT(DISTINCT message_id) FROM email_recipients WHERE type='cc'").fetchone()[0]
+        bcc_n = conn.execute("SELECT COUNT(DISTINCT message_id) FROM email_recipients WHERE type='bcc'").fetchone()[0]
+        print(f"  {'cc_addresses':22}: {cc_n:>7,}  ({cc_n/inserted*100:.1f}%)")
+        print(f"  {'bcc_addresses':22}: {bcc_n:>7,}  ({bcc_n/inserted*100:.1f}%)")
+        for col in ["x_from", "x_to", "x_cc", "x_bcc", "x_folder", "x_origin",
+                    "content_type", "forwarded_content", "quoted_content", "headings"]:
+            n = conn.execute(
+                f"SELECT COUNT(*) FROM emails WHERE {col} IS NOT NULL AND {col} != ''"
+            ).fetchone()[0]
+            print(f"  {col:22}: {n:>7,}  ({n/inserted*100:.1f}%)")
+        attach_n = conn.execute("SELECT COUNT(*) FROM emails WHERE has_attachment=1").fetchone()[0]
+        print(f"  {'has_attachment':22}: {attach_n:>7,}  ({attach_n/inserted*100:.1f}%)")
 
     conn.close()
 
