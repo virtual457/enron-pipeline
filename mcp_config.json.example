@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "gmail": {
+      "command": "npx",
+      "args": ["-y", "gmail-mcp-server"],
+      "env": {
+        "GMAIL_CLIENT_ID": "<your-google-oauth-client-id>",
+        "GMAIL_CLIENT_SECRET": "<your-google-oauth-client-secret>",
+        "GMAIL_REDIRECT_URI": "http://localhost:3000/oauth2callback",
+        "GMAIL_REFRESH_TOKEN": "<your-refresh-token>"
+      }
+    }
+  }
+}
